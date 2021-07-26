@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Text, View, StyleSheet } from "react-native";
 
-export default class Home extends React.component {
+export default class Metior extends React.component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Home Screen</Text>
+        <Text>Meteor Locator</Text>
       </View>
     );
   }
