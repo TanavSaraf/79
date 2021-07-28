@@ -9,8 +9,8 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
+    <NavigationContainer >
+      <Stack.Navigator initialRouteName='Home' screenOptions={{headerShown:false}}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Meteor" component={Meteor} />
         <Stack.Screen name="IssTracker" component={Iss} />
