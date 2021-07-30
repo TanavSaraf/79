@@ -12,6 +12,9 @@ import {
 } from "react-native";
 
 export default class Home extends React.Component {
+  navigateFunction=(screen)=>{
+    this.props.navigation.navigate(screen)
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -25,14 +28,21 @@ export default class Home extends React.Component {
           >
             Iss Tracker App
           </Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} 
+          onPress={()=>{
+            this.navigateFunction('IssTracker')
+          }}>
 
             <Text style={styles.text}>Iss Location</Text>
             <Text style={styles.knowMore}>Know More</Text>
             <Text style={styles.number}>1</Text>
             <Image style={styles.rootImage} source={require('../assets/iss_icon.png')} />
+            
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} 
+          onPress={()=>{
+            this.navigateFunction('Meteor')
+          }}>
 
             <Text style={styles.text}>Meteor</Text>
             <Text style={styles.knowMore}>Know More</Text>
