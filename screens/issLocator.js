@@ -18,6 +18,7 @@ export default class Iss extends React.Component {
     };
   }
   getLocation = async () => {
+    //module to get the api's response. 
     axios
       .get("https://api.wheretheiss.at/v1/satellites/25544")
       .then((response) => {
@@ -56,11 +57,11 @@ export default class Iss extends React.Component {
             <Text style={styles.headerText}>Locator Screen</Text>
             <View style={styles.mapContainer}><MapView
               style={styles.map}
-              initialRegion={{
+              region={{
                 latitude: this.state.location.latitude,
                 longitude: this.state.location.longitude,
-                longitudeDelta: 100,
-                latitudeDelta: 100,
+                longitudeDelta: 30,
+                latitudeDelta: 30,
               }}
             >
               <Marker
