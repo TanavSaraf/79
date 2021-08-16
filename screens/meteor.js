@@ -7,6 +7,9 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  FlatList,
+  Image,
+  Dimensions,
 } from "react-native";
 import axios from "axios";
 export default class Metior extends React.Component {
@@ -15,26 +18,56 @@ export default class Metior extends React.Component {
 
     this.state = {
       meteors: {},
-      date:0,
-      month:0,
-      year:0,
     };
   }
-  getMeteor = async () => {
-    var dt=new Date().getDate()
-    var month=new Date().getMonth()
-    var year=new Date().getFullYear()
-    if(dt<10){
-      this.setState({date:'0'+dt})
-
-    }else{
-      this.setState({date:dt})
+  renderItem = ({ item, index }) => {
+    var bg, speedImg, imgSize;
+    if (item.threatScore < 30) {
+      bg = require("../assets/meteor_bg1.png");
+      speedImg = require("../assets/meteor_speed1.gif");
+      size = 100;
+    } else if (item.threatScore > 30 && item.threatScore < 75) {
+      bg = require("../assets/meteor_bg2.png");
+      speedImg = require("../assets/meteor_speed2.gif");
+      size = 150;
+    } else {
+      bg = require("../assets/meteor_bg3.png");
+      speedImg = require("../assets/meteor_speed3.gif");
+      size = 200;
     }
-    this.setState({year:year});
-    this.setState({month:month})
+    return (
+      <View>
+        <ImageBackground source={bg} style={styles.background}>
+          <Image source={speedImg} style={{width:size,height:size,marginTop:200}}/>
+          <View style={{marginTop:20}}>
+            <Text style={styles.text2}>Name: {item.name}</Text>
+            <Text style={styles.text2}>Date Approaching: {item.close_approach_data[0].close_approach_date_full}</Text>
+          </View>
+        </ImageBackground>
+      </View>
+    );
+  };
+  getMeteor = async () => {
+    var dt = new Date().getDate();
+    var mnth = new Date().getMonth();
+    var yr = new Date().getFullYear();
+
+    var Startdte = yr + "-" + (mnth + 1) + "-" + dt;
+    var Enddte = yr + "-" + (mnth + 1) + "-" + dt;
+    console.log(
+      "https://api.nasa.gov/neo/rest/v1/feed?start_date=" +
+        Startdte +
+        "&end_date=" +
+        Enddte +
+        "&api_key=GwKjSjYBrypMBkY5vbEbsZBhxO8fhlSQmpiENDzF"
+    );
     axios
       .get(
-        "https://api.nasa.gov/neo/rest/v1/feed?start_date="+this.state.year+'-'+this.state.month+'-'+this.state.date+"&end_date="+"&api_key=GwKjSjYBrypMBkY5vbEbsZBhxO8fhlSQmpiENDzF"
+        "https://api.nasa.gov/neo/rest/v1/feed?start_date=" +
+          Startdte +
+          "&end_date=" +
+          Enddte +
+          "&api_key=GwKjSjYBrypMBkY5vbEbsZBhxO8fhlSQmpiENDzF"
       )
       .then((response) => {
         this.setState({ meteors: response.data.near_earth_objects });
@@ -75,6 +108,10 @@ export default class Metior extends React.Component {
           1000000000;
         element.threatScore = threatSc;
       });
+      meteors.sort((meteorA, meteorB) => {
+        return meteorB.threatScore - meteorA.threatScore;
+      });
+      meteors = meteors.slice(0, 5);
       return (
         <View style={styles.container}>
           <SafeAreaView style={styles.androidSafeArea} />
@@ -83,7 +120,13 @@ export default class Metior extends React.Component {
             source={require("../assets/meteor_bg.jpg")}
           >
             <Text style={styles.headerText}>Meteor Screen</Text>
-            <Text style={styles.headerText}>DONE</Text>
+
+            <FlatList
+              data={meteors}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={this.renderItem}
+              horizontal={true}
+            />
           </ImageBackground>
         </View>
       );
@@ -93,6 +136,7 @@ export default class Metior extends React.Component {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "black" },
   text: { fontSize: 20, fontWeight: "bold", color: "black", marginLeft: 20 },
+  text2: { fontSize: 20, fontWeight: "bold", color: "white", marginLeft: 20 },
   button: {
     backgroundColor: "white",
     borderRadius: 10,
@@ -105,7 +149,7 @@ const styles = StyleSheet.create({
   androidSafeArea: {
     marginTop: Platform.OS == "android" ? StatusBar.currentHeight : null,
   },
-  background: { flex: 1, resizeMode: "cover" },
+  background: { flex: 1, resizeMode: "cover",width:Dimensions.get('window').width,height:Dimensions.get('window').height },
   headerText: {
     color: "white",
     fontWeight: "bold",
